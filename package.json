@@ -23,5 +23,8 @@
   "homepage": "https://github.com/flowing1ife/aSuMusic-contract#readme",
   "devDependencies": {
     "hardhat": "^2.9.9"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^5.0.0"
   }
 }
