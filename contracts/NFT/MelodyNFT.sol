@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 
-import "../interfaces/IMelodyNFT.sol";
-
+//import "../interfaces/IMelodyNFT.sol";
 import "../libraries/EnumerableSet.sol";
 
-contract MelodyNFT is ERC721Upgradeable, IMelodyNFT, OwnableUpgradeable {
+contract MelodyNFT is ERC721Upgradeable, OwnableUpgradeable {
+    error MelodyNft__InvalidTokenUri();
+    error MelodyNft__CanOnlyBeBurnedIfOwnedByMinter();
+
+    struct MelodyInfo {
+        address owner;
+        string  tokenURI;
+        uint    mintTime;
+    }
     using EnumerableSet for EnumerableSet.UintSet;
 
     uint256 public currentTokenId;
@@ -44,12 +50,12 @@ contract MelodyNFT is ERC721Upgradeable, IMelodyNFT, OwnableUpgradeable {
         return currentTokenId;
     }
 
-    function burn(uint tokenId) public override {
-        if (!_isAuthorized(minters[tokenId], msg.sender, tokenId) && minters[tokenId] != msg.sender) {
+    function burn(address from, uint tokenId) public override {
+        if (!_isApprovedOrOwner(from, tokenId)) {
             revert MelodyNft__CanOnlyBeBurnedIfOwnedByMinter();
         }
         _burn(tokenId);
-        emit Burn(tokenId);
+        emit Burn(from, tokenId);
 
     }
 
@@ -87,5 +93,7 @@ contract MelodyNFT is ERC721Upgradeable, IMelodyNFT, OwnableUpgradeable {
     function getMelodyInfo(uint tokenId) public view returns(MelodyInfo memory){
         return MelodyInfos[tokenId];
     }
+    event Mint(uint tokenId, address owner, string tokenURI, uint mintTime);
+    event Burn(address from, uint256 tokenId);
 
 }

@@ -1,24 +1,26 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.9;
 
 import "forge-std/Test.sol";
-import "../contracts/Counter.sol";
+import "../contracts/NFT/LyricsNFT.sol";
 
 contract CounterTest is Test {
-    Counter public counter;
+    LyricsNFT public lyricsNFT;
+    address deployer = makeAddr("deployer");
+    address user = makeAddr("user");
 
     function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+        lyricsNFT = new LyricsNFT();
+        lyricsNFT.initialize(deployer);
     }
 
     function testIncrement() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+        lyricsNFT.mint(user, "hello");
+        assertEq(lyricsNFT.getCurrentTokenId(), 1);
     }
 
-    function testSetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
-    }
+//    function testSetNumber(uint256 x) public {
+//        counter.setNumber(x);
+//        assertEq(counter.number(), x);
+//    }
 }
