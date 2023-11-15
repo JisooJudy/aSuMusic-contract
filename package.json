@@ -1,0 +1,27 @@
+{
+  "name": "asumusic-contract",
+  "version": "1.0.0",
+  "description": "aSuMusic 컨트랙트 개발",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://flowing1ife@github.com/flowing1ife/aSuMusic-contract.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flowing1ife/aSuMusic-contract/issues"
+  },
+  "homepage": "https://github.com/flowing1ife/aSuMusic-contract#readme",
+  "devDependencies": {
+    "hardhat": "^2.9.9"
+  }
+}
