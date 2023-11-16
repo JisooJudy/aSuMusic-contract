@@ -53,7 +53,7 @@ contract MelodyNFT is ERC721URIStorageUpgradeable, IMelodyNFT {
         delete melodyMinters[tokenId];
         userMelodyTokenIdList[owner].remove(tokenId);
         delete melodyInfos[tokenId];
-
+        melodyTotalSupply -= 1;
         emit MelodyNFTBurn(from, tokenId);
     }
 

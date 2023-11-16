@@ -23,7 +23,7 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
         __ERC721_init("Lyrics-NFT", "Lyrics");
         lyricsTotalSupply = 0;
         lyricsCurrentTokenId = 0;
-        require(_minter != address(0), "WithdrawalNFT: minter is the zero address");
+        require(_minter != address(0), "LyricsNFT: minter is the zero address");
         lyricsMinter = _minter;
     }
 
@@ -53,7 +53,7 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
         delete lyricsMinters[tokenId];
         userLyricsTokenIdList[owner].remove(tokenId);
         delete lyricsInfos[tokenId];
-
+        lyricsTotalSupply -= 1;
         emit LyricsNFTBurn(from, tokenId);
     }
 
