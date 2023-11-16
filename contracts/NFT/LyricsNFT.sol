@@ -7,6 +7,7 @@ import "../interfaces/ILyricsNFT.sol";
 
 import "../libraries/EnumerableSet.sol";
 
+
 contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
 
     using EnumerableSet for EnumerableSet.UintSet;
@@ -19,7 +20,7 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
     mapping(uint => address) public lyricsMinters;
     mapping(uint => LyricsInfo) public lyricsInfos;
 
-    function initialize(address _minter) public initializer {
+    function initializeLyricsNFT(address _minter) public initializer {
         __ERC721_init("Lyrics-NFT", "Lyrics");
         lyricsTotalSupply = 0;
         lyricsCurrentTokenId = 0;
@@ -27,14 +28,14 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
         lyricsMinter = _minter;
     }
 
-    function mint(address to, string memory _tokenURI) public returns(uint) {
+    function lyricsNFTMint(address to, string memory _tokenURI) public returns(uint) {
         if (bytes(_tokenURI).length == 0) {
             revert LyricsNft__InvalidTokenUri();
         }
         lyricsTotalSupply += 1;
         lyricsCurrentTokenId += 1;
         _mint(to, lyricsCurrentTokenId);
-        _setTokenURI(lyricsCurrentTokenId, _tokenURI);
+        _setLyricsTokenURI(lyricsCurrentTokenId, _tokenURI);
         lyricsMinters[lyricsCurrentTokenId] = to;
         userLyricsTokenIdList[to].add(lyricsCurrentTokenId);
         lyricsInfos[lyricsCurrentTokenId] = LyricsInfo(to, _tokenURI, block.number);
@@ -42,8 +43,8 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
         return lyricsCurrentTokenId;
     }
 
-    function burn(address from, uint tokenId) public {
-        if (!isApprovedOrOwner(from, tokenId)) {
+    function lyricsNFTBurn(address from, uint tokenId) public {
+        if (!isLyricsApprovedOrOwner(from, tokenId)) {
             revert LyricsNft__CanOnlyBeBurnedIfOwnedByMinter();
         }
         _burn(tokenId);
@@ -57,27 +58,27 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
         emit LyricsNFTBurn(from, tokenId);
     }
 
-    function _setTokenURI(
+    function _setLyricsTokenURI(
         uint256 tokenId,
         string memory _tokenURI
-    ) internal override(ERC721URIStorageUpgradeable) {
-        super._setTokenURI(tokenId, _tokenURI);
+    ) internal {
+        ERC721URIStorageUpgradeable._setTokenURI(tokenId, _tokenURI);
     }
 
-    function isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {
+    function isLyricsApprovedOrOwner(address spender, uint256 tokenId) public view returns (bool) {
         address owner = ERC721Upgradeable.ownerOf(tokenId);
         return (spender == owner || ERC721Upgradeable.isApprovedForAll(owner, spender) || ERC721Upgradeable.getApproved(tokenId) == spender);
     }
 
-    function getCurrentTokenId() public view returns (uint) {
+    function getLyricsNFTCurrentTokenId() public view returns (uint) {
         return lyricsCurrentTokenId;
     }
 
-    function getUserTokenIdList(address user) public view returns (uint[] memory) {
+    function getLyricsNFTUserTokenIdList(address user) public view returns (uint[] memory) {
         return userLyricsTokenIdList[user].values();
     }
 
-    function getTokenURI(
+    function getLyricsNFTTokenURI(
         uint tokenId
     ) public view returns (string memory){
         return tokenURI(tokenId);
@@ -85,6 +86,10 @@ contract LyricsNFT is ERC721URIStorageUpgradeable, ILyricsNFT {
 
     function getLyricsInfo(uint tokenId) public view returns(LyricsInfo memory){
         return lyricsInfos[tokenId];
+    }
+
+    function getLyricsMinter(uint tokenId) public view returns(address){
+        return lyricsMinters[tokenId];
     }
 
 }

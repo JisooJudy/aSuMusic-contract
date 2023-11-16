@@ -11,16 +11,17 @@ contract LyricsNFTTest is Test {
 
     function setUp() public {
         lyricsNFT = new LyricsNFT();
-        lyricsNFT.initialize(deployer);
+        lyricsNFT.initializeLyricsNFT(deployer);
     }
 
     function testLyricsNFTMint() public {
         uint expectedMintTime = block.number;
-        lyricsNFT.mint(user, "hello");
+        lyricsNFT.lyricsNFTMint(user, "hello");
 
         assertEq(lyricsNFT.lyricsTotalSupply(), 1, "LYRICS NFT MINT : wrong total supply");
-        assertEq(lyricsNFT.getCurrentTokenId(), 1, "LYRICS NFT MINT : wrong current token id");
-        assertEq(lyricsNFT.getTokenURI(1), "hello", "LYRICS NFT MINT : wrong current token uri");
+        assertEq(lyricsNFT.getLyricsNFTCurrentTokenId(), 1, "LYRICS NFT MINT : wrong current token id");
+        assertEq(lyricsNFT.getLyricsNFTTokenURI(1), "hello", "LYRICS NFT MINT : wrong token uri");
+        assertEq(lyricsNFT.getLyricsMinter(1), user, "LYRICS NFT MINT : wrong lyrics minter");
         assertEq(lyricsNFT.getLyricsInfo(1).owner, user, "LYRICS NFT MINT : wrong lyricsInfo's owner");
         assertEq(lyricsNFT.getLyricsInfo(1).tokenURI, "hello", "LYRICS NFT MINT : wrong lyricsInfo's tokenUri");
         assertEq(lyricsNFT.getLyricsInfo(1).mintTime, expectedMintTime, "LYRICS NFT MINT : wrong lyricsInfo's mintTime");
@@ -28,30 +29,31 @@ contract LyricsNFTTest is Test {
     }
 
     function testLyricsNFTBurn() public {
-        lyricsNFT.mint(user, "hello");
-        lyricsNFT.burn(user, 1);
+        lyricsNFT.lyricsNFTMint(user, "hello");
+        lyricsNFT.lyricsNFTBurn(user, 1);
         assertEq(lyricsNFT.lyricsTotalSupply(), 0, "LYRICS NFT BURN : wrong total supply");
-        assertEq(lyricsNFT.getCurrentTokenId(), 1, "LYRICS NFT BURN : wrong current token id");
+        assertEq(lyricsNFT.getLyricsNFTCurrentTokenId(), 1, "LYRICS NFT BURN : wrong current token id");
+        assertEq(lyricsNFT.getLyricsMinter(1), address(0), "LYRICS NFT BURN : wrong lyrics minter");
         assertEq(lyricsNFT.getLyricsInfo(1).owner, address(0), "LYRICS NFT BURN : wrong lyricsInfo's owner");
         assertEq(lyricsNFT.getLyricsInfo(1).tokenURI, "", "LYRICS NFT BURN : wrong lyricsInfo's tokenUri");
         consoleUserTokenIdList(user);
     }
 
     function testGetUserLyricsTokenIdList() public {
-        lyricsNFT.mint(user, "hello");
-        lyricsNFT.mint(user, "hello1");
-        lyricsNFT.mint(user, "hello2");
-        lyricsNFT.mint(user, "hello3");
+        lyricsNFT.lyricsNFTMint(user, "hello");
+        lyricsNFT.lyricsNFTMint(user, "hello1");
+        lyricsNFT.lyricsNFTMint(user, "hello2");
+        lyricsNFT.lyricsNFTMint(user, "hello3");
         console.log("--------After Mint----------");
         consoleUserTokenIdList(user);
 
-        lyricsNFT.burn(user, 2);
+        lyricsNFT.lyricsNFTBurn(user, 2);
         console.log("--------After Burn----------");
         consoleUserTokenIdList(user);
     }
 
     function consoleUserTokenIdList(address _user) internal {
-        uint[] memory userTokenIds = lyricsNFT.getUserTokenIdList(_user);
+        uint[] memory userTokenIds = lyricsNFT.getLyricsNFTUserTokenIdList(_user);
         for(uint i = 0; i < userTokenIds.length; i++){
             console.log(userTokenIds[i]);
         }

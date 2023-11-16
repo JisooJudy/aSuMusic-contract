@@ -11,12 +11,13 @@ interface ILyricsNFT  {
         uint    mintTime;
     }
 
-    function mint(address to, string memory _tokenURI) external returns (uint);
-    function burn(address from, uint tokenId) external;
-    function getCurrentTokenId() external view returns (uint);
-    function getUserTokenIdList(address user) external view returns (uint[] memory);
-    function getTokenURI(uint tokenId) external view returns (string memory);
+    function lyricsNFTMint(address to, string memory _tokenURI) external returns (uint);
+    function lyricsNFTBurn(address from, uint tokenId) external;
+    function getLyricsNFTCurrentTokenId() external view returns (uint);
+    function getLyricsNFTUserTokenIdList(address user) external view returns (uint[] memory);
+    function getLyricsNFTTokenURI(uint tokenId) external view returns (string memory);
     function getLyricsInfo(uint tokenId) external view returns(LyricsInfo memory);
+    function getLyricsMinter(uint tokenId) external view returns(address);
 
     event LyricsNFTMint(uint tokenId, address owner, string tokenURI, uint mintTime);
     event LyricsNFTBurn(address from, uint256 tokenId);
