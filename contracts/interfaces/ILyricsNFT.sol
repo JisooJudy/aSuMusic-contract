@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
-interface ILyricsNFT is IERC721Upgradeable {
+interface ILyricsNFT  {
     error LyricsNft__InvalidTokenUri();
     error LyricsNft__CanOnlyBeBurnedIfOwnedByMinter();
 
@@ -20,7 +20,7 @@ interface ILyricsNFT is IERC721Upgradeable {
     function getTokenURI(uint tokenId) external view returns (string memory);
     function getLyricsInfo(uint tokenId) external view returns(LyricsInfo memory);
 
-    event Mint(uint tokenId, address owner, string tokenURI, uint mintTime);
-    event Burn(address from, uint256 tokenId);
+    event LyricsNFTMint(uint tokenId, address owner, string tokenURI, uint mintTime);
+    event LyricsNFTBurn(address from, uint256 tokenId);
 }
 

@@ -1,62 +1,60 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-//import "../interfaces/IMelodyNFT.sol";
+import "../interfaces/IMelodyNFT.sol";
+
 import "../libraries/EnumerableSet.sol";
 
-contract MelodyNFT is ERC721Upgradeable, OwnableUpgradeable {
-    error MelodyNft__InvalidTokenUri();
-    error MelodyNft__CanOnlyBeBurnedIfOwnedByMinter();
+contract MelodyNFT is ERC721URIStorageUpgradeable, IMelodyNFT {
 
-    struct MelodyInfo {
-        address owner;
-        string  tokenURI;
-        uint    mintTime;
-    }
     using EnumerableSet for EnumerableSet.UintSet;
 
-    uint256 public currentTokenId;
-    address public minter;
+    uint public melodyTotalSupply;
+    uint public melodyCurrentTokenId;
+    address public melodyMinter;
 
-    mapping(address => EnumerableSet.UintSet) public userMelodyTokenIdList;
-    mapping(uint => address) public minters;
-    mapping(uint => MelodyInfo) public lyricsInfos;
+    mapping(address => EnumerableSet.UintSet) userMelodyTokenIdList;
+    mapping(uint => address) public melodyMinters;
+    mapping(uint => MelodyInfo) public melodyInfos;
 
     function initialize(address _minter) public initializer {
         __ERC721_init("Melody-NFT", "Melody");
-        __Ownable_init();
-        totalSupply = 0;
-        currentTokenId = 0;
+        melodyTotalSupply = 0;
+        melodyCurrentTokenId = 0;
         require(_minter != address(0), "WithdrawalNFT: minter is the zero address");
-        minter = _minter;
+        melodyMinter = _minter;
     }
 
     function mint(address to, string memory _tokenURI) public returns(uint) {
         if (bytes(_tokenURI).length == 0) {
             revert MelodyNft__InvalidTokenUri();
         }
-        totalSupply += 1;
-        currentTokenId += 1;
-        _mint(to, currentTokenId);
-        _setTokenURI(currentTokenId, _tokenURI);
-        minters[tokenId] = to;
-        userMelodyTokenIdList.add(currentTokenId);
-        lyricsInfos[currentTokenId] = MelodyInfo(to, _tokenURI, block.number);
-        emit Mint(currentTokenId, to, _tokenURI, block.number);
-        return currentTokenId;
+        melodyTotalSupply += 1;
+        melodyCurrentTokenId += 1;
+        _mint(to, melodyCurrentTokenId);
+        _setTokenURI(melodyCurrentTokenId, _tokenURI);
+        melodyMinters[melodyCurrentTokenId] = to;
+        userMelodyTokenIdList[to].add(melodyCurrentTokenId);
+        melodyInfos[melodyCurrentTokenId] = MelodyInfo(to, _tokenURI, block.number);
+        emit MelodyNFTMint(melodyCurrentTokenId, to, _tokenURI, block.number);
+        return melodyCurrentTokenId;
     }
 
-    function burn(address from, uint tokenId) public override {
-        if (!_isApprovedOrOwner(from, tokenId)) {
+    function burn(address from, uint tokenId) public {
+        if (!isApprovedOrOwner(from, tokenId)) {
             revert MelodyNft__CanOnlyBeBurnedIfOwnedByMinter();
         }
         _burn(tokenId);
-        emit Burn(from, tokenId);
 
+        address owner = melodyMinters[tokenId];
+
+        delete melodyMinters[tokenId];
+        userMelodyTokenIdList[owner].remove(tokenId);
+        delete melodyInfos[tokenId];
+
+        emit MelodyNFTBurn(from, tokenId);
     }
 
     function _setTokenURI(
@@ -66,34 +64,27 @@ contract MelodyNFT is ERC721Upgradeable, OwnableUpgradeable {
         super._setTokenURI(tokenId, _tokenURI);
     }
 
-    function _burn(uint tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
-        super._burn(tokenId);
-
-        address owner = minters[tokenId];
-
-        delete minters[tokenId];
-        delete userMelodyTokenIdList[owner].remove(tokenId);
-        delete lyricsInfos[tokenId];
+    function isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {
+        address owner = ERC721Upgradeable.ownerOf(tokenId);
+        return (spender == owner || ERC721Upgradeable.isApprovedForAll(owner, spender) || ERC721Upgradeable.getApproved(tokenId) == spender);
     }
 
     function getCurrentTokenId() public view returns (uint) {
-        return currentTokenId;
+        return melodyCurrentTokenId;
     }
 
-    function getUserTokenIdList(address user) public view returns (uint[]) {
+    function getUserTokenIdList(address user) public view returns (uint[] memory) {
         return userMelodyTokenIdList[user].values();
     }
 
     function getTokenURI(
         uint tokenId
-    ) public view override(ERC721Upgradeable, ERC721URIStorageUpgradeable) returns (string memory){
-        return super.tokenURI(tokenId);
+    ) public view returns (string memory){
+        return tokenURI(tokenId);
     }
 
     function getMelodyInfo(uint tokenId) public view returns(MelodyInfo memory){
-        return MelodyInfos[tokenId];
+        return melodyInfos[tokenId];
     }
-    event Mint(uint tokenId, address owner, string tokenURI, uint mintTime);
-    event Burn(address from, uint256 tokenId);
 
 }

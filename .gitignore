@@ -25,3 +25,5 @@ secrets.json
 # Ignore private test
 *Private.t.sol
 *Private.ts
+
+lib
