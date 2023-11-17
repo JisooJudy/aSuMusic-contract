@@ -19,7 +19,7 @@ contract VocalNFTTest is Test {
         vocalNFT.vocalNFTMint(user, "hello");
 
         assertEq(vocalNFT.vocalTotalSupply(), 1, "VOCAL NFT MINT : wrong total supply");
-        assertEq(vocalNFT.getVocalNFTCurrentToken(), 1, "VOCAL NFT MINT : wrong current token id");
+        assertEq(vocalNFT.getVocalNFTCurrentTokenId(), 1, "VOCAL NFT MINT : wrong current token id");
         assertEq(vocalNFT.getVocalNFTTokenURI(1), "hello", "VOCAL NFT MINT : wrong token uri");
         assertEq(vocalNFT.getVocalMinter(1), user, "VOCAL NFT MINT : wrong total supply");
         assertEq(vocalNFT.getVocalInfo(1).owner, user, "VOCAL NFT MINT : wrong vocalInfo's owner");
