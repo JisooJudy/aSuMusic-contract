@@ -3,36 +3,36 @@ pragma solidity ^0.8.9;
 
 import "forge-std/Test.sol";
 
-import "../contracts/aSuMusic.sol";
-import "../contracts/NFT/LyricsNFT.sol";
-import "../contracts/NFT/MelodyNFT.sol";
-import "../contracts/NFT/MusicNFT.sol";
+import "../contracts/utils/ASumConstant.sol";
+import "../contracts/ASuMusic.sol";
+import "../contracts/NFT/ASuMusicNFT.sol";
 
-contract ASuMusicTest is Test, aSuMusic {
-    MelodyNFT public _melodyNFT;
-    MusicNFT public _musicNFT;
-    LyricsNFT public _lyricsNFT;
+
+contract ASuMusicTest is Test {
+    ASuMusicNFT public _melodyNFT;
+    ASuMusicNFT public _musicNFT;
+    ASuMusicNFT public _lyricsNFT;
     aSuMusic public _aSuMusic;
 
     address deployer = makeAddr("deployer");
     address user = makeAddr("user");
 
     function setUp() public {
-        _melodyNFT = new MelodyNFT();
-        _lyricsNFT = new LyricsNFT();
-        _musicNFT = new MusicNFT();
+        _melodyNFT = new ASuMusicNFT();
+        _lyricsNFT = new ASuMusicNFT();
+        _musicNFT = new ASuMusicNFT();
         _aSuMusic = new aSuMusic();
 
-        _melodyNFT.initializeMelodyNFT(deployer);
-        _lyricsNFT.initializeLyricsNFT(deployer);
-        _musicNFT.initializeMusicNFT(deployer);
 
+        _melodyNFT.initialize(deployer);
+        _lyricsNFT.initialize(deployer);
+        _musicNFT.initialize(deployer);
         _aSuMusic.sync(address(_melodyNFT), address(_lyricsNFT), address(_musicNFT));
 
         vm.startPrank(user);
         {
-            _melodyNFT.melodyNFTMint(user, "hello");
-            _lyricsNFT.lyricsNFTMint(user, "https://meebits.larvalabs.com/meebit/3 ");
+            _melodyNFT.mint(user, "hello");
+            _lyricsNFT.mint(user, "https://meebits.larvalabs.com/meebit/3 ");
         }
         vm.stopPrank();
     }
@@ -46,10 +46,10 @@ contract ASuMusicTest is Test, aSuMusic {
 
     function consoleASuMusicInfo(address _user) public {
         (
-            aSuMusicInfo memory _aSuMusicInfo,
-            LyricsNFT.LyricsInfo memory _lyricsInfo,
-            MelodyNFT.MelodyInfo memory _melodyInfo,
-            MusicNFT.MusicInfo memory _musicInfo
+            ASumConstant.ASuMusicInfo memory _aSuMusicInfo,
+            ASumConstant.ASuMusicNFTInfo memory _lyricsInfo,
+            ASumConstant.ASuMusicNFTInfo memory _melodyInfo,
+            ASumConstant.ASuMusicNFTInfo memory _musicInfo
         )
             = _aSuMusic.getASuMusicInfo(_user);
 

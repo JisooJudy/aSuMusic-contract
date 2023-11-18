@@ -1,38 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "./ILyricsNFT.sol";
-import "./IMelodyNFT.sol";
-import "./IMusicNFT.sol";
+import "./IASuMusicNFT.sol";
+import "../utils/ASumConstant.sol";
 
-interface IASuMusic is IMelodyNFT, ILyricsNFT, IMusicNFT {
 
-    struct aSuMusicInfo {
-        uint lyricsTokenId;
-        uint melodyTokenId;
-        uint musicTokenId;
-    }
+interface IASuMusic is IASuMusicNFT {
 
-    function setASuMusicInfo(
+    function setASumConstant(
         address owner,
         uint lyricsTokenId,
         uint melodyTokenId,
         uint musicTokenId
-    ) external returns (aSuMusicInfo memory);
+    ) external returns (ASumConstant.ASuMusicInfo memory);
 
-    function setLyricsTokenId(address owner, uint lyricsTokenId) external returns (aSuMusicInfo memory);
-    function setMelodyTokenId(address owner, uint melodyTokenId) external returns (aSuMusicInfo memory);
-    function setMusicTokenId(address owner, uint musicTokenId) external returns (aSuMusicInfo memory);
-    function getASuMusicInfo(address owner) external returns (aSuMusicInfo memory, LyricsInfo memory, MelodyInfo memory, MusicInfo memory);
+    function setLyricsTokenId(address owner, uint lyricsTokenId) external returns (ASumConstant.ASuMusicInfo memory);
+    function setMelodyTokenId(address owner, uint melodyTokenId) external returns (ASumConstant.ASuMusicInfo memory);
+    function setMusicTokenId(address owner, uint musicTokenId) external returns (ASumConstant.ASuMusicInfo memory);
+    function getASuMusicInfo(address owner) external view returns (
+        ASumConstant.ASuMusicInfo memory, 
+        ASumConstant.ASuMusicNFTInfo memory, 
+        ASumConstant.ASuMusicNFTInfo memory, 
+        ASumConstant.ASuMusicNFTInfo memory
+    );
 
     function musicMintWithASuMusicInfos(
         address owner,
         string memory _tokenURI,
         uint lyricsTokenId,
         uint melodyTokenId
-    ) external returns(uint musicTokenId, aSuMusicInfo memory);
-
-    event SetASuMusicInfo(address owner, uint lyricsTokenId, uint melodyTokenId, uint musicTokenId);
-    event DeleteASuMusicInfo(address owner);
+    ) external returns(uint musicTokenId, ASumConstant.ASuMusicInfo memory);
 }
 
