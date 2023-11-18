@@ -6,7 +6,7 @@ import "./interfaces/IASuMusicNFT.sol";
 import "./interfaces/IASuMusic.sol";
 import "./utils/ASumConstant.sol";
 
-contract aSuMusic {
+contract ASuMusic {
 
     event SetASuMusicInfo(address owner, uint lyricsTokenId, uint melodyTokenId, uint musicTokenId);
     event DeleteASuMusicInfo(address owner);
